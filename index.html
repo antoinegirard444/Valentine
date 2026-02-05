@@ -88,3 +88,176 @@
     }
 
     #yesBtn {
+      left: 15%;
+      background: var(--yes);
+      color: #fff;
+      z-index: 20; /* Pour rester au-dessus du bouton Non */
+    }
+    #yesBtn:hover { background: var(--yesHover); }
+
+    #noBtn {
+      right: 15%;
+      background: #e5e7eb;
+      color: #111827;
+      z-index: 15;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      animation: pop .35s ease;
+    }
+
+    .result h2 {
+      font-size: clamp(28px, 5vw, 42px);
+      margin: 10px 0;
+      color: #ff3b7a;
+    }
+
+    .fireworks {
+      width: min(300px, 80vw);
+      border-radius: 15px;
+      margin: 0 auto;
+      display: block;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    @keyframes pop {
+      from { transform: scale(.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <main class="card">
+    <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="fur" x1="0" x2="1">
+          <stop offset="0" stop-color="#f7c7a1"/>
+          <stop offset="1" stop-color="#f2a97b"/>
+        </linearGradient>
+        <linearGradient id="heart" x1="0" x2="1">
+          <stop offset="0" stop-color="#ff4d7d"/>
+          <stop offset="1" stop-color="#ff1f68"/>
+        </linearGradient>
+      </defs>
+      <path d="M250 50 C250 33 270 25 282 38 C294 25 314 33 314 50 C314 78 282 92 282 106 C282 92 250 78 250 50Z" fill="url(#heart)"/>
+      <path d="M90 120 C90 70 140 40 190 60 C240 40 290 70 290 120 C290 180 240 210 190 210 C140 210 90 180 90 120Z" fill="url(#fur)"/>
+      <circle cx="160" cy="130" r="8" fill="#333"/>
+      <circle cx="220" cy="130" r="8" fill="#333"/>
+      <path d="M190 144 C186 144 182 148 182 152 C182 160 190 164 190 170 C190 164 198 160 198 152 C198 148 194 144 190 144Z" fill="#ff7aa2"/>
+    </svg>
+
+    <h1 id="mainTitle">Elisa, veux-tu être ma Valentine ?</h1>
+
+    <section class="button-zone" id="zone">
+      <button id="yesBtn">Oui !</button>
+      <button id="noBtn">Non</button>
+    </section>
+
+    <div class="hint" id="hint">Essaye de cliquer sur Non pour voir... 😈</div>
+
+    <section class="result" id="result">
+      <h2>OUIII ! ❤️ 🎉</h2>
+      <img
+        class="fireworks"
+        src="https://media.giphy.com/media/9ZsHoKnjg4ykx3mzTR/giphy.gif"
+        alt="Grenouille joyeuse"
+      />
+    </section>
+  </main>
+
+  <script>
+    const zone = document.getElementById("zone");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+    const mainTitle = document.getElementById("mainTitle");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+
+    // Ajustement de la taille du canvas pour les confettis
+    function resizeConfettiCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      confettiCanvas.width = window.innerWidth * dpr;
+      confettiCanvas.height = window.innerHeight * dpr;
+    }
+    resizeConfettiCanvas();
+    window.addEventListener("resize", resizeConfettiCanvas);
+
+    const confettiInstance = confetti.create(confettiCanvas, { resize: false });
+
+    function launchConfetti() {
+      const duration = 3 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confettiInstance({
+          particleCount: 7,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#ff3b7a', '#ffd6e7', '#ffffff']
+        });
+        confettiInstance({
+          particleCount: 7,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#ff3b7a', '#ffd6e7', '#ffffff']
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
+
+    // Le bouton Oui grossit quand on essaye de toucher le Non
+    let yesScale = 1;
+    function growYes() {
+      yesScale = Math.min(3, yesScale + 0.2);
+      yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+    }
+
+    // Le bouton Non s'enfuit de manière aléatoire
+    function moveNo() {
+      const z = zone.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+      
+      const newLeft = Math.random() * (z.width - b.width);
+      const newTop = Math.random() * (z.height - b.height);
+
+      noBtn.style.left = newLeft + "px";
+      noBtn.style.top = newTop + "px";
+      noBtn.style.transform = "none";
+      growYes();
+    }
+
+    // Détection du survol (souris et tactile)
+    zone.addEventListener("pointermove", e => {
+      const b = noBtn.getBoundingClientRect();
+      const distance = Math.hypot((b.left + b.width/2) - e.clientX, (b.top + b.height/2) - e.clientY);
+      if (distance < 100) moveNo();
+    });
+
+    // Action finale lors du clic sur Oui
+    yesBtn.addEventListener("click", () => {
+      zone.style.display = "none";
+      hint.style.display = "none";
+      mainTitle.style.display = "none";
+      result.style.display = "block";
+      launchConfetti();
+    });
+  </script>
+</body>
+</html>
