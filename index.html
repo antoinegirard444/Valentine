@@ -112,6 +112,7 @@
     .result h2 {
       font-size: clamp(30px, 4.5vw, 46px);
       margin: 10px 0;
+      color: #ff3b7a;
     }
 
     .fireworks {
@@ -119,6 +120,7 @@
       margin: 0 auto;
       display: block;
       border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
 
     @keyframes pop {
@@ -188,11 +190,11 @@
     <div class="hint" id="hint">Essaye de cliquer sur non... 😈</div>
 
     <section class="result" id="result">
-      <h2>Yaaaay 🥰</h2>
+      <h2>Wouhouuu ! 🎉</h2>
       <img
         class="fireworks"
-        src="https://media.giphy.com/media/9ZsHoKnjg4ykx3mzTR/giphy.gif"
-        alt="Grenouille joyeuse"
+        src="https://i.pinimg.com/originals/95/b0/0a/95b00aac82fda0b59cd986077f1f5780.gif"
+        alt="Chats mignons"
       />
     </section>
   </main>
@@ -203,7 +205,6 @@
     const noBtn = document.getElementById("noBtn");
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
-
     const confettiCanvas = document.getElementById("confettiCanvas");
 
     function resizeConfettiCanvas() {
@@ -263,6 +264,7 @@
     yesBtn.addEventListener("click", () => {
       zone.style.display = "none";
       hint.style.display = "none";
+      document.querySelector('h1').style.display = "none";
       result.style.display = "block";
       resizeConfettiCanvas();
       fullScreenConfetti();
