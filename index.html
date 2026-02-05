@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -16,7 +17,9 @@
       --yesHover: #ff1f68;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -24,12 +27,13 @@
       display: grid;
       place-items: center;
       background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      background-attachment: fixed;
       font-family: system-ui, sans-serif;
-      overflow: hidden;
+      overflow-y: auto;
       padding: 16px;
     }
 
-    /* Toile pour les confettis en plein écran */
+    /* FULL-SCREEN CONFETTI CANVAS */
     #confettiCanvas {
       position: fixed;
       inset: 0;
@@ -46,28 +50,25 @@
       backdrop-filter: blur(10px);
       border-radius: 22px;
       text-align: center;
-      box-shadow: 0 18px 60px rgba(0,0,0,.15);
-      position: relative;
-      z-index: 10;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .15);
     }
 
     .art {
-      width: min(200px, 60vw);
+      width: min(340px, 90vw);
       margin: 0 auto 10px;
       display: block;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
+      filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .12));
     }
 
     h1 {
-      font-size: clamp(22px, 4vw, 38px);
+      font-size: clamp(26px, 4vw, 44px);
       margin: 12px 0 18px;
-      color: #333;
     }
 
     .button-zone {
       position: relative;
-      width: 100%;
-      height: 180px;
+      width: min(520px, 92%);
+      height: 200px;
       margin: 0 auto;
       touch-action: none;
     }
@@ -82,24 +83,27 @@
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(0,0,0,.14);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .14);
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
       transition: transform .12s ease, background .12s ease;
+      white-space: nowrap;
     }
 
     #yesBtn {
-      left: 15%;
+      left: 20%;
       background: var(--yes);
       color: #fff;
-      z-index: 20; /* Pour rester au-dessus du bouton Non */
     }
-    #yesBtn:hover { background: var(--yesHover); }
+
+    #yesBtn:hover {
+      background: var(--yesHover);
+    }
 
     #noBtn {
-      right: 15%;
+      left: 65%;
       background: #e5e7eb;
       color: #111827;
-      z-index: 15;
     }
 
     .hint {
@@ -115,22 +119,49 @@
     }
 
     .result h2 {
-      font-size: clamp(28px, 5vw, 42px);
+      font-size: clamp(30px, 4.5vw, 46px);
       margin: 10px 0;
-      color: #ff3b7a;
     }
 
     .fireworks {
-      width: min(300px, 80vw);
-      border-radius: 15px;
+      width: min(420px, 85vw);
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      object-position: center 5%;
+      border-radius: 16px;
       margin: 0 auto;
       display: block;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 20px 16px;
+      }
+
+      .button-zone {
+        height: 240px;
+      }
+
+      #yesBtn {
+        left: 15%;
+      }
+
+      #noBtn {
+        left: 60%;
+      }
     }
 
     @keyframes pop {
-      from { transform: scale(.96); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(.96);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -139,40 +170,61 @@
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
-    <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+    <svg class="art" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="fur" x1="0" x2="1">
-          <stop offset="0" stop-color="#f7c7a1"/>
-          <stop offset="1" stop-color="#f2a97b"/>
+        <linearGradient id="fur-dog" x1="0" x2="1">
+          <stop offset="0" stop-color="#dfb182" />
+          <stop offset="1" stop-color="#c69362" />
         </linearGradient>
-        <linearGradient id="heart" x1="0" x2="1">
-          <stop offset="0" stop-color="#ff4d7d"/>
-          <stop offset="1" stop-color="#ff1f68"/>
+        <linearGradient id="fur-monkey" x1="0" x2="1">
+          <stop offset="0" stop-color="#8d5b3e" />
+          <stop offset="1" stop-color="#70442c" />
+        </linearGradient>
+        <linearGradient id="face-monkey" x1="0" x2="1">
+          <stop offset="0" stop-color="#f5ccb0" />
+          <stop offset="1" stop-color="#e2b091" />
+        </linearGradient>
+        <linearGradient id="heart-grad" x1="0" x2="1">
+          <stop offset="0" stop-color="#ff4d7d" />
+          <stop offset="1" stop-color="#ff1f68" />
         </linearGradient>
       </defs>
-      <path d="M250 50 C250 33 270 25 282 38 C294 25 314 33 314 50 C314 78 282 92 282 106 C282 92 250 78 250 50Z" fill="url(#heart)"/>
-      <path d="M90 120 C90 70 140 40 190 60 C240 40 290 70 290 120 C290 180 240 210 190 210 C140 210 90 180 90 120Z" fill="url(#fur)"/>
-      <circle cx="160" cy="130" r="8" fill="#333"/>
-      <circle cx="220" cy="130" r="8" fill="#333"/>
-      <path d="M190 144 C186 144 182 148 182 152 C182 160 190 164 190 170 C190 164 198 160 198 152 C198 148 194 144 190 144Z" fill="#ff7aa2"/>
+
+      <g transform="translate(110, 130)">
+        <circle cx="0" cy="0" r="40" fill="url(#fur-dog)" />
+        <path d="M-35 -10 Q-55 -10 -50 30" stroke="url(#fur-dog)" stroke-width="15" stroke-linecap="round" fill="none" />
+        <path d="M35 -10 Q55 -10 50 30" stroke="url(#fur-dog)" stroke-width="15" stroke-linecap="round" fill="none" />
+        <circle cx="-15" cy="-5" r="4" fill="#000" />
+        <circle cx="15" cy="-5" r="4" fill="#000" />
+        <ellipse cx="0" cy="10" rx="6" ry="4" fill="#333" />
+        <path d="M15 15 C15 8 25 5 30 12 C35 5 45 8 45 15 C45 25 30 32 30 40 C30 32 15 25 15 15Z" fill="url(#heart-grad)" />
+      </g>
+
+      <g transform="translate(290, 130)">
+        <circle cx="-40" cy="-10" r="12" fill="url(#fur-monkey)" />
+        <circle cx="40" cy="-10" r="12" fill="url(#fur-monkey)" />
+        <circle cx="0" cy="0" r="42" fill="url(#fur-monkey)" />
+        <path d="M-30 0 A 30 30 0 1 1 30 0 A 25 25 0 1 1 -30 0" fill="url(#face-monkey)" opacity="0.9" transform="translate(0, 5) scale(1.1, 1)" />
+        <circle cx="-12" cy="0" r="4" fill="#000" />
+        <circle cx="12" cy="0" r="4" fill="#000" />
+        <path d="M-10 15 Q0 22 10 15" stroke="#70442c" stroke-width="2" fill="none" />
+        <path d="M-45 15 C-45 8 -35 5 -30 12 C-25 5 -15 8 -15 15 C-15 25 -30 32 -30 40 C-30 32 -45 25 -45 15Z" fill="url(#heart-grad)" />
+      </g>
     </svg>
 
-    <h1 id="mainTitle">Elisa, veux-tu être ma Valentine ?</h1>
+    <h1>Elisa, veux-tu être ma Valentine ?</h1>
 
     <section class="button-zone" id="zone">
-      <button id="yesBtn">Oui !</button>
+      <button id="yesBtn">Oui</button>
       <button id="noBtn">Non</button>
     </section>
 
-    <div class="hint" id="hint">Essaye de cliquer sur Non pour voir... 😈</div>
+    <div class="hint">Ma cutu baby 🤭</div>
+    <div class="hint" id="hint">Essaye de cliquer sur non</div>
 
     <section class="result" id="result">
-      <h2>OUIII ! ❤️ 🎉</h2>
-      <img
-        class="fireworks"
-        src="https://media.giphy.com/media/9ZsHoKnjg4ykx3mzTR/giphy.gif"
-        alt="Grenouille joyeuse"
-      />
+      <h2>OUIII ! 🎀💜</h2>
+      <img class="fireworks" src="https://media.giphy.com/media/9ZsHoKnjg4ykx3mzTR/giphy.gif" alt="Grenouille Valentine" />
     </section>
   </main>
 
@@ -182,81 +234,115 @@
     const noBtn = document.getElementById("noBtn");
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
-    const mainTitle = document.getElementById("mainTitle");
+
     const confettiCanvas = document.getElementById("confettiCanvas");
 
-    // Ajustement de la taille du canvas pour les confettis
     function resizeConfettiCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      confettiCanvas.width = window.innerWidth * dpr;
-      confettiCanvas.height = window.innerHeight * dpr;
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      confettiCanvas.width = Math.floor(window.innerWidth * dpr);
+      confettiCanvas.height = Math.floor(window.innerHeight * dpr);
+      confettiCanvas.style.width = "100vw";
+      confettiCanvas.style.height = "100vh";
     }
+
     resizeConfettiCanvas();
     window.addEventListener("resize", resizeConfettiCanvas);
 
-    const confettiInstance = confetti.create(confettiCanvas, { resize: false });
+    const confettiInstance = confetti.create(confettiCanvas, {
+      resize: false,
+      useWorker: true
+    });
 
-    function launchConfetti() {
-      const duration = 3 * 1000;
-      const end = Date.now() + duration;
-
+    function fullScreenConfetti() {
+      const end = Date.now() + 1600;
       (function frame() {
         confettiInstance({
-          particleCount: 7,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-          colors: ['#ff3b7a', '#ffd6e7', '#ffffff']
+          particleCount: 12,
+          spread: 90,
+          startVelocity: 45,
+          ticks: 180,
+          origin: { x: Math.random(), y: Math.random() * 0.3 }
         });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+      setTimeout(() => {
         confettiInstance({
-          particleCount: 7,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-          colors: ['#ff3b7a', '#ffd6e7', '#ffffff']
+          particleCount: 300,
+          spread: 140,
+          startVelocity: 60,
+          ticks: 220,
+          origin: { x: 0.5, y: 0.55 }
         });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      }());
+      }, 300);
     }
 
-    // Le bouton Oui grossit quand on essaye de toucher le Non
     let yesScale = 1;
     function growYes() {
-      yesScale = Math.min(3, yesScale + 0.2);
+      yesScale = Math.min(2.2, yesScale + 0.1);
       yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
     }
 
-    // Le bouton Non s'enfuit de manière aléatoire
-    function moveNo() {
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function moveNo(px, py) {
       const z = zone.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
-      
-      const newLeft = Math.random() * (z.width - b.width);
-      const newTop = Math.random() * (z.height - b.height);
+      const cx = b.left + b.width / 2;
+      const cy = b.top + b.height / 2;
+      let dx = cx - px;
+      let dy = cy - py;
+
+      if (Math.hypot(dx, dy) < 10) {
+        const angle = Math.random() * Math.PI * 2;
+        dx = Math.cos(angle);
+        dy = Math.sin(angle);
+      } else {
+        const mag = Math.hypot(dx, dy) || 1;
+        dx /= mag;
+        dy /= mag;
+      }
+
+      const jump = 160;
+      let newLeft = (b.left - z.left) + dx * jump;
+      let newTop = (b.top - z.top) + dy * jump;
+      const pad = 5;
+      newLeft = clamp(newLeft, pad, z.width - b.width - pad);
+      newTop = clamp(newTop, pad, z.height - b.height - pad);
 
       noBtn.style.left = newLeft + "px";
       noBtn.style.top = newTop + "px";
+      noBtn.style.right = "auto";
       noBtn.style.transform = "none";
       growYes();
     }
 
-    // Détection du survol (souris et tactile)
     zone.addEventListener("pointermove", e => {
-      const b = noBtn.getBoundingClientRect();
-      const distance = Math.hypot((b.left + b.width/2) - e.clientX, (b.top + b.height/2) - e.clientY);
-      if (distance < 100) moveNo();
+      if (e.pointerType === 'mouse') {
+        const b = noBtn.getBoundingClientRect();
+        const d = Math.hypot((b.left + b.width / 2) - e.clientX, (b.top + b.height / 2) - e.clientY);
+        if (d < 100) moveNo(e.clientX, e.clientY);
+      }
     });
 
-    // Action finale lors du clic sur Oui
+    noBtn.addEventListener("click", e => {
+      e.preventDefault();
+      moveNo(e.clientX, e.clientY);
+    });
+
+    noBtn.addEventListener("touchstart", e => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      moveNo(touch.clientX, touch.clientY);
+    }, { passive: false });
+
     yesBtn.addEventListener("click", () => {
       zone.style.display = "none";
       hint.style.display = "none";
-      mainTitle.style.display = "none";
       result.style.display = "block";
-      launchConfetti();
+      resizeConfettiCanvas();
+      fullScreenConfetti();
     });
   </script>
 </body>
