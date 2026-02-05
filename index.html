@@ -86,12 +86,12 @@
       transition: transform .12s ease, background .12s ease;
     }
 
-    #Btn {
+    #yesBtn {
       left: 18%;
-      background: var(--);
+      background: var(--yes);
       color: #fff;
     }
-    #Btn:hover { background: var(--Hover); }
+    #yesBtn:hover { background: var(--yesHover); }
 
     #noBtn {
       left: 62%;
@@ -171,18 +171,21 @@
             fill="#ff7aa2"/>
     </svg>
 
-    <h1>Elisa, veux-tu être ma Valentine ?</h1>
+    <h1>Elisa, veux-tu être ma valentine ?</h1>
 
     <section class="button-zone" id="zone">
       <button id="yesBtn">Oui</button>
       <button id="noBtn">Non</button>
     </section>
 
+    <!-- HINT (ONLY FIRST SECTION) -->
+    <div class="hint" id="hint">😈</div>
+
     <section class="result" id="result">
       <h2>YAY! 🎉</h2>
       <img
         class="fireworks"
-        src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWhmZWttMzhxOWp0emQ5cWxnYWN5dGQ2Y2w4aHh5YjFsNnhia3B2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9ZsHoKnjg4ykx3mzTR/giphy.gif"
+        src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
         alt="Fireworks"
       />
     </section>
